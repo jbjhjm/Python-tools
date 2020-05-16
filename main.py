@@ -3,13 +3,14 @@ import glob
 import os
 import numpy
 import json
+import matplotlib.pyplot as pyplot
 
 import lib.polyfit_linear as linear_fit
-from lib.helpers_file import load_source_files, getFileinfo, writeToJson
+from lib.helpers_file import load_source_files, getFileinfo, writeToJson, readJson
 from lib.helpers_plot import addDefaultGridlines, newPlot
 
 files = load_source_files()
-nameToAMap = {};
+nameToSlopeMap = {};
 
 index = 0
 for path in files:
@@ -32,12 +33,33 @@ for path in files:
 	linear_fit.drawInfobox(plot,xySamples,polyfit)
 
 	fileInfo = getFileinfo(path)
-	nameToAMap[fileInfo['name']] = polyfit['model'][0]
+	nameToSlopeMap[fileInfo['name']] = polyfit['model'][0]
 	figure.savefig('output/'+fileInfo['name']+'.png', dpi=300)
 
-	index += 1
-	if index > 4:
-		print('>>> limit loop during development')
-		break
+	# trash the figure to free up memory
+	pyplot.close(figure)
 
-writeToJson("output/a_list.json",nameToAMap)
+	# index += 1
+	# if index > 4:
+	# 	print('>>> limit loop during development')
+	# 	break
+
+groups = readJson("source/groups.json")
+allGroupData = {}
+
+for group in groups:
+	groupId = group[0]
+	slopesInGroup = []
+
+	for fileName in group:
+		slopesInGroup.append(nameToSlopeMap[fileName])
+
+	averageSlope = sum(slopesInGroup) / len(slopesInGroup)
+	stdDev = numpy.std(slopesInGroup - averageSlope)
+	allGroupData[groupId] = {
+		'averageSlope':averageSlope,
+		'stdDev':stdDev
+	}
+	# print('avg and std of group '+groupId,averageSlope,stdDev)
+
+writeToJson('groupInfo.json',allGroupData)

@@ -24,3 +24,9 @@ def writeToJson(filePath:AnyStr,data:any):
 	file = open(filePath, "w")
 	json.dump(data, file, indent=4, sort_keys=True)
 	file.close()
+
+def readJson(filePath:AnyStr):
+	file = open(filePath, "r")
+	data = json.load(file)
+	file.close()
+	return data

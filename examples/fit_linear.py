@@ -3,6 +3,7 @@ import glob
 import os
 import numpy
 import json
+import matplotlib.pyplot as pyplot
 
 import lib.polyfit_linear as linear_fit
 from lib.helpers_file import load_source_files, getFileinfo, writeToJson
@@ -32,6 +33,9 @@ for path in files:
 
 	fileInfo = getFileinfo(path)
 	figure.savefig('output/'+fileInfo['name']+'.png', dpi=300)
+
+	# trash the figure to free up memory
+	pyplot.close(figure)
 
 	# index += 1
 	# if index > 4:
