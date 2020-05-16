@@ -1,0 +1,7 @@
+source/*
+input/*
+output/*
+!source/.gitkeep
+!input/.gitkeep
+!output/.gitkeep
+__pycache__
